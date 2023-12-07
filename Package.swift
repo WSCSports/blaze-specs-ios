@@ -15,7 +15,7 @@ let package = Package(
     ],
     targets: [
       .binaryTarget(name: "BlazeSDK",
-                    url: "https://github.com/WSCSports/blaze-specs-ios/releases/download/0.4.3/BlazeSDK.zip",
-                    checksum: "140c7e046f34d26659f7f904ae86eb5ab1ba38ad5d8783514af422ec98d0a494")
+                    url: "https://github.com/WSCSports/blaze-specs-ios/releases/download/0.5.1/BlazeSDK.zip",
+                    checksum: "fb5e8f2940dda24684fc29eba94ac5c2bd01721a5f2414ea88ca8be48922bf5b")
     ]
 )
