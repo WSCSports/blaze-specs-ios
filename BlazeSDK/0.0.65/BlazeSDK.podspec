@@ -16,7 +16,7 @@ Pod::Spec.new do |s|
                        DESC
 
     s.homepage         = 'https://wsc-sports.com'
-    s.license          = { :type => 'Closed Source', :file => 'LICENSE' }
+    s.license          = { :type => 'Closed Source' }
     s.author           = { 'Mobile Dev WSC' => 'developers@wsc-sports.com' }
     s.source           = { :http => "https://blazeprodeus2.blob.core.windows.net/ios-sdk/0.0.65/BlazeSDK.zip" }
 
