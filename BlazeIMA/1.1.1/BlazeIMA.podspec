@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
     s.name             = 'BlazeIMA'
-    s.version          = '#{version}'
+    s.version          = '1.1.1'
     s.summary          = 'BlazeIMA allows IMA in inApp Stories and more'
 
     s.description      = <<-DESC

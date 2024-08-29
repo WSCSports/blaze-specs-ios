@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
     s.name             = 'BlazeGAM'
-    s.version          = '#{version}'
+    s.version          = '1.1.1'
     s.summary          = 'BlazeGAM allows Google Custom Native Ads in inApp Stories and more'
 
     s.description      = <<-DESC
