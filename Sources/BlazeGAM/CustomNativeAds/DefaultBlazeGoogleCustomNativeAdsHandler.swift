@@ -1,5 +1,5 @@
 //
-//  BlazeAdsHandler.swift
+//  DefaultBlazeGoogleCustomNativeAdsHandler.swift
 //
 //
 //  Created by Dor Zafrir on 19/06/2024.
@@ -9,18 +9,18 @@ import Foundation
 import BlazeSDK
 import GoogleMobileAds
 
-final class BlazeAdsHandler: BlazeGoogleCustomNativeAdsHandler {
+final class DefaultBlazeGoogleCustomNativeAdsHandler: BlazeGoogleCustomNativeAdsHandler {
     
-    let defaultAdsConfig: BlazeGAMDefaultAdsConfig?
+    let defaultAdsConfig: BlazeGAMCustomNativeAdsDefaultConfig?
     
-    var delegate: BlazeGAMDelegate
+    var delegate: BlazeGAMCustomNativeAdsDelegate
     
-    init(defaultAdsConfig: BlazeGAMDefaultAdsConfig?, delegate: BlazeGAMDelegate) {
+    init(defaultAdsConfig: BlazeGAMCustomNativeAdsDefaultConfig?, delegate: BlazeGAMCustomNativeAdsDelegate) {
         self.defaultAdsConfig = defaultAdsConfig
         self.delegate = delegate
     }
     
-    let adsProvider = BlazeAdsProvider()
+    let adsProvider = BlazeCustomNativeAdsProvider()
     
     func onAdEvent(eventType: BlazeGoogleCustomNativeAdsHandlerEventType, adModel: BlazeGoogleCustomNativeAdModel) {
         if let adData = adModel.adData {

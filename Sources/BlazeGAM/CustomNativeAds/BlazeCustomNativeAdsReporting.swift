@@ -1,5 +1,5 @@
 //
-//  BlazeAdsReporting.swift
+//  BlazeCustomNativeAdsReporting.swift
 //
 //
 //  Created by Dor Zafrir on 19/06/2024.
@@ -9,7 +9,7 @@ import Foundation
 import GoogleMobileAds
 import BlazeSDK
 
-extension BlazeGoogleCustomNativeAdModel {
+internal extension BlazeGoogleCustomNativeAdModel {
     
     func reportAdImpression() {
         nativeAd?.recordImpression()
@@ -19,9 +19,9 @@ extension BlazeGoogleCustomNativeAdModel {
         let assetKey: String
         switch content {
         case .image:
-            assetKey = BlazeAdsConstants.imageKey
+            assetKey = BlazeCustomNativeAdsConstants.imageKey
         case .video:
-            assetKey = BlazeAdsConstants.videoKey
+            assetKey = BlazeCustomNativeAdsConstants.videoKey
         }
 
         nativeAd?.customClickHandler = { _ in }
@@ -33,7 +33,7 @@ extension BlazeGoogleCustomNativeAdModel {
        adData?.nativeAd
     }
     
-    var adData: BlazeCustomAdData? {
-        customAdditionalData as? BlazeCustomAdData
+    var adData: BlazeCustomNativeAdData? {
+        customAdditionalData as? BlazeCustomNativeAdData
     }
 }

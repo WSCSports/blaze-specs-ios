@@ -1,5 +1,5 @@
 //
-//  BlazeAdManager.swift
+//  BlazeCustomNativeAdsManager.swift
 //
 //
 //  Created by Dor Zafrir on 19/06/2024.
@@ -8,11 +8,11 @@
 import GoogleMobileAds
 import UIKit
 
-final class BlazeAdManager: NSObject, GADAdLoaderDelegate, GADCustomNativeAdLoaderDelegate {
+final class BlazeCustomNativeAdsManager: NSObject, GADAdLoaderDelegate, GADCustomNativeAdLoaderDelegate {
     
-    static let sharedInstance = BlazeAdManager()
+    static let sharedInstance = BlazeCustomNativeAdsManager()
     
-    private var currentAdRequests = [BlazeNativeAdRequest]()
+    private var currentAdRequests = [BlazeCustomNativeAdRequest]()
     
     /// Load a single ad from Google and wait for it's result to return.
     ///
@@ -25,7 +25,7 @@ final class BlazeAdManager: NSObject, GADAdLoaderDelegate, GADCustomNativeAdLoad
                      templateId: String,
                      customTargetingProperties: [String: String]) async throws -> GADCustomNativeAd? {
         return try await withCheckedThrowingContinuation { continuation in
-            BlazeAdManager.sharedInstance.getNativeAd(
+            BlazeCustomNativeAdsManager.sharedInstance.getNativeAd(
                 adUnitId: adUnitId,
                 templateId: templateId,
                 customTargetingProperties: customTargetingProperties) { ad, error in
@@ -34,7 +34,7 @@ final class BlazeAdManager: NSObject, GADAdLoaderDelegate, GADCustomNativeAdLoad
                     } else if let nativeAd = ad {
                         continuation.resume(returning: nativeAd)
                     } else {
-                        continuation.resume(throwing: BlazeGAMError(reason: .noAdFoundWithUnknownError))
+                        continuation.resume(throwing: BlazeGAMCustomNativeAdsError(reason: .noAdFoundWithUnknownError))
                     }
                 }
         }
@@ -55,7 +55,7 @@ final class BlazeAdManager: NSObject, GADAdLoaderDelegate, GADCustomNativeAdLoad
         request.customTargeting = customTargetingProperties
         
         
-        let nativeAdRequest = BlazeNativeAdRequest(adLoader: adLoader,
+        let nativeAdRequest = BlazeCustomNativeAdRequest(adLoader: adLoader,
                                                    completion: completion,
                                                    templateId: templateId)
         
@@ -91,7 +91,7 @@ final class BlazeAdManager: NSObject, GADAdLoaderDelegate, GADCustomNativeAdLoad
         removeAdRequest(adRequest: nativeAdRequest)
     }
     
-    private func removeAdRequest(adRequest: BlazeNativeAdRequest) {
+    private func removeAdRequest(adRequest: BlazeCustomNativeAdRequest) {
         currentAdRequests.removeAll(where: { $0 == adRequest })
     }
 }

@@ -1,5 +1,5 @@
 //
-//  BlazeNativeAdRequest.swift
+//  BlazeCustomNativeAdRequest.swift
 //
 //
 //  Created by Dor Zafrir on 19/06/2024.
@@ -8,8 +8,8 @@
 import Foundation
 import GoogleMobileAds
 
-final class BlazeNativeAdRequest: Equatable {
-    static func == (lhs: BlazeNativeAdRequest, rhs: BlazeNativeAdRequest) -> Bool {
+final class BlazeCustomNativeAdRequest: Equatable {
+    static func == (lhs: BlazeCustomNativeAdRequest, rhs: BlazeCustomNativeAdRequest) -> Bool {
         lhs.adLoader == rhs.adLoader && lhs.templateId == rhs.templateId
     }
 

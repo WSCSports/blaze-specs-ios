@@ -27,8 +27,8 @@ let package = Package(
     ],
     targets: [
         .binaryTarget(name: "BlazeSDK",
-                      url: "https://github.com/WSCSports/blaze-specs-ios/releases/download/1.1.1/BlazeSDK.zip",
-                      checksum: "07a7b2949e51ea5252e961e8abab9fb7fb0e43f978c2aa047a37333977ad2d76"),
+                      url: "https://github.com/WSCSports/blaze-specs-ios/releases/download/1.2.0/BlazeSDK.zip",
+                      checksum: "b3707acb7dbfaf7bcc31251a783771e7d56b97909fb41af3d2bab5c179ef87b3"),
         .target(name: "BlazeIMA",
                 dependencies: ["BlazeSDK",
                                .product(name: "GoogleInteractiveMediaAds",

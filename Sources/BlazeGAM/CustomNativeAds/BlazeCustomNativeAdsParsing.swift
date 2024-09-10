@@ -1,5 +1,5 @@
 //
-//  BlazeAdParsing.swift
+//  BlazeCustomNativeAdsParsing.swift
 //
 //
 //  Created by Dor Zafrir on 19/06/2024.
@@ -9,28 +9,28 @@ import Foundation
 import GoogleMobileAds
 import BlazeSDK
 
-extension GADCustomNativeAd {
+internal extension GADCustomNativeAd {
     
     func toAdModel() -> BlazeGoogleCustomNativeAdModel? {
-        guard let creativeType = string(forKey: BlazeAdsConstants.creativeTypeKey),
-              let clickURL = string(forKey: BlazeAdsConstants.clickURLKey),
-              let advertiserName = string(forKey: BlazeAdsConstants.advertiserNameKey),
-              let trackingURL = string(forKey: BlazeAdsConstants.trackingURLKey),
-              let clickType = string(forKey: BlazeAdsConstants.clickTypeKey),
-              let clickThroughCTA = string(forKey: BlazeAdsConstants.clickThroughCTAKey) else {
+        guard let creativeType = string(forKey: BlazeCustomNativeAdsConstants.creativeTypeKey),
+              let clickURL = string(forKey: BlazeCustomNativeAdsConstants.clickURLKey),
+              let advertiserName = string(forKey: BlazeCustomNativeAdsConstants.advertiserNameKey),
+              let trackingURL = string(forKey: BlazeCustomNativeAdsConstants.trackingURLKey),
+              let clickType = string(forKey: BlazeCustomNativeAdsConstants.clickTypeKey),
+              let clickThroughCTA = string(forKey: BlazeCustomNativeAdsConstants.clickThroughCTAKey) else {
             return nil
         }
 
         var content: BlazeGoogleCustomNativeAdModel.Content?
         switch creativeType {
-        case BlazeAdsConstants.displayType:
-            if let imageUrl = image(forKey: BlazeAdsConstants.imageKey)?.imageURL?.absoluteString {
+        case BlazeCustomNativeAdsConstants.displayType:
+            if let imageUrl = image(forKey: BlazeCustomNativeAdsConstants.imageKey)?.imageURL?.absoluteString {
                 content = .image(urlString: imageUrl, duration: 5)
             }
             
-        case BlazeAdsConstants.videoType:
-            if let videoUrl = string(forKey: BlazeAdsConstants.videoKey) {
-                let previewImageUrl = string(forKey: BlazeAdsConstants.videoPreviewImageUrlKey)
+        case BlazeCustomNativeAdsConstants.videoType:
+            if let videoUrl = string(forKey: BlazeCustomNativeAdsConstants.videoKey) {
+                let previewImageUrl = string(forKey: BlazeCustomNativeAdsConstants.videoPreviewImageUrlKey)
                 content = .video(urlString: videoUrl, loadingImageUrl: previewImageUrl)
             }
             
@@ -45,11 +45,11 @@ extension GADCustomNativeAd {
         
         var cta: BlazeGoogleCustomNativeAdModel.CtaModel?
         switch clickType {
-        case BlazeAdsConstants.webKey:
+        case BlazeCustomNativeAdsConstants.webKey:
             cta = .init(type: .web,
                         url: clickURL,
                         text: clickThroughCTA)
-        case BlazeAdsConstants.inAppKey:
+        case BlazeCustomNativeAdsConstants.inAppKey:
             cta = .init(type: .deeplink,
                         url: clickURL,
                         text: clickThroughCTA)
@@ -66,7 +66,7 @@ extension GADCustomNativeAd {
                               title: advertiserName,
                               cta: cta,
                               trackingPixelAdList: trackingPixels,
-                              customAdditionalData: BlazeCustomAdData(nativeAd: self))
+                              customAdditionalData: BlazeCustomNativeAdData(nativeAd: self))
 
         return adModel
     }

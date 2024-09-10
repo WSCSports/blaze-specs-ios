@@ -1,5 +1,5 @@
 //
-//  BlazeAdsConstants.swift
+//  BlazeCustomNativeAdsConstants.swift
 //
 //
 //  Created by Dor Zafrir on 19/06/2024.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum BlazeAdsConstants {
+enum BlazeCustomNativeAdsConstants {
     static let advertiserNameKey = "Advertiser"
     
     static let videoKey = "VideoURL"
