@@ -13,8 +13,9 @@ final class BlazeIMAHandler: NSObject, BlazeIMAHandlerProtocol {
 
     private var adsLoader: IMAAdsLoader?
     private var adsManager: IMAAdsManager?
+    private let adTagEnricher = BlazeIMAAdTagEnricher()
 
-    private var volume: Float = 0 {
+    var volume: Float = 0 {
         didSet {
             adsManager?.volume = volume
         }
@@ -61,16 +62,25 @@ final class BlazeIMAHandler: NSObject, BlazeIMAHandlerProtocol {
     }
     
     
-    func requestAds(adContainerView: UIView, adVC: UIViewController, adTag: String, initialVolume: Float) {
-        // Create ad display container for ad rendering.
-        self.volume = initialVolume
-        let mergedTagWithExtraParams = merged(tag: adTag, with: adExtraParams())
+    func requestAds(adContainerView: UIView, 
+                    adVC: UIViewController,
+                    requestData: BlazeIMAAdRequestData,
+                    initialVolume: Float) {
         adsLoader = nil
         adsManager?.destroy()
+        
+        // Create ad display container for ad rendering.
+        self.volume = initialVolume
+        
+        let mergedTagWithExtraParams = adTagEnricher.enrichedTagURL(requestData: requestData,
+                                                                    appExtraParams: extraParamsFromApp(),
+                                                                    initialVolume: initialVolume)
         let imaSettings = appDelegate?.customIMASettingsOrDefault()
+        
+        let adDisplayContainer = IMAAdDisplayContainer(adContainer: adContainerView, viewController: adVC, companionSlots: nil)
         adsLoader = IMAAdsLoader(settings: imaSettings)
         adsLoader?.delegate = self
-        let adDisplayContainer = IMAAdDisplayContainer(adContainer: adContainerView, viewController: adVC, companionSlots: nil)
+        
         // Create an ad request with our ad tag, display container, and optional user context.
         let request = IMAAdsRequest(
             adTagUrl: mergedTagWithExtraParams,
@@ -89,25 +99,10 @@ final class BlazeIMAHandler: NSObject, BlazeIMAHandlerProtocol {
         return BlazeImaAdInfo(adId: ad?.adId, adTitle: ad?.adTitle, adDescription: ad?.adDescription, adSystem: ad?.adSystem, isSkippable: ad?.isSkippable, skipTimeOffset: ad?.skipTimeOffset, adDuration: ad?.duration, advertiserName: ad?.advertiserName)
     }
     
-    private func adExtraParams() -> [String: String] {
+    private func extraParamsFromApp() -> [String: String] {
         return appDelegate?.additionalIMATagQueryParamsOrDefault() ?? [:]
     }
     
-    private func merged(tag: String, with extraParams: [String: String]) -> String {
-        // Convert the base tag string to URLComponents
-        guard var urlComponents = URLComponents(string: tag) else { return tag }
-        extraParams.forEach { key, value in
-            // Append each extra parameter as a query item
-            let queryItem = URLQueryItem(name: key, value: value)
-            // If queryItems is nil, initialize it before appending
-            if urlComponents.queryItems == nil {
-                urlComponents.queryItems = []
-            }
-            urlComponents.queryItems?.append(queryItem)
-        }
-        let modifiedTagURL = urlComponents.url
-        return modifiedTagURL?.absoluteString ?? tag
-    }
 }
 
 extension BlazeIMAHandler: IMAAdsLoaderDelegate {
