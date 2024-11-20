@@ -23,12 +23,16 @@ final class BlazeCustomNativeAdsManager: NSObject, GADAdLoaderDelegate, GADCusto
     /// - Returns: the loaded ad, or nil if any error occured.
     func getNativeAd(adUnitId: String,
                      templateId: String,
-                     customTargetingProperties: [String: String]) async throws -> GADCustomNativeAd? {
+                     customTargetingProperties: [String: String],
+                     publisherProvidedId: String?,
+                     networkExtras: GADExtras?) async throws -> GADCustomNativeAd? {
         return try await withCheckedThrowingContinuation { continuation in
             BlazeCustomNativeAdsManager.sharedInstance.getNativeAd(
                 adUnitId: adUnitId,
                 templateId: templateId,
-                customTargetingProperties: customTargetingProperties) { ad, error in
+                customTargetingProperties: customTargetingProperties,
+                publisherProvidedId: publisherProvidedId,
+                networkExtras: networkExtras) { ad, error in
                     if let error {
                         continuation.resume(throwing: error)
                     } else if let nativeAd = ad {
@@ -43,6 +47,8 @@ final class BlazeCustomNativeAdsManager: NSObject, GADAdLoaderDelegate, GADCusto
     private func getNativeAd(adUnitId: String,
                              templateId: String,
                              customTargetingProperties: [String: String],
+                             publisherProvidedId: String?,
+                             networkExtras: GADExtras?,
                              completion: @escaping (GADCustomNativeAd?, Error?) -> Void) {
         let adLoader = GADAdLoader(
             adUnitID: adUnitId,
@@ -53,6 +59,16 @@ final class BlazeCustomNativeAdsManager: NSObject, GADAdLoaderDelegate, GADCusto
         
         let request = GAMRequest()
         request.customTargeting = customTargetingProperties
+        
+        // Add publisher provided ID if it is set
+        if let publisherId = publisherProvidedId {
+            request.publisherProvidedID = publisherId
+        }
+
+        // Add network extras bundle if it is set
+        if let extras = networkExtras {
+            request.register(extras)
+        }
         
         
         let nativeAdRequest = BlazeCustomNativeAdRequest(adLoader: adLoader,

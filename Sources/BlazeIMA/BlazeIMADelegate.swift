@@ -35,6 +35,11 @@ public struct BlazeIMADelegate {
      */
     public typealias CustomIMASettingsHandler = () -> IMASettings?
     
+    /**
+     - Returns: An overridden ad tag URL to be used instead of the default.
+     */
+    public typealias OverrideAdTagUrlHandler = () -> String?
+    
     
     /// Called when an error occurs during ad loading or playback.
     public var onIMAAdError: OnIMAAdErrorHandler?
@@ -70,14 +75,26 @@ public struct BlazeIMADelegate {
     ///   ```
     public var customIMASettings: CustomIMASettingsHandler?
     
+    /// Overrides the default ad tag URL with a custom one. This URL will be used for the ad request.
+    ///
+    /// Example implementation:
+    /// ```
+    /// overrideAdTagUrl {
+    ///     return "https://example.com/ads?custom_param=value"
+    /// }
+    /// ```
+    public var overrideAdTagUrl: OverrideAdTagUrlHandler?
+    
     public init(onIMAAdError: OnIMAAdErrorHandler? = nil,
                 onIMAAdEvent: OnIMAAdEventHandler? = nil,
                 additionalIMATagQueryParams: AdditionalIMATagQueryParamsHandler? = nil,
-                customIMASettings: CustomIMASettingsHandler? = nil) {
+                customIMASettings: CustomIMASettingsHandler? = nil,
+                overrideAdTagUrl: OverrideAdTagUrlHandler? = nil) {
         self.onIMAAdError = onIMAAdError
         self.onIMAAdEvent = onIMAAdEvent
         self.additionalIMATagQueryParams = additionalIMATagQueryParams
         self.customIMASettings = customIMASettings
+        self.overrideAdTagUrl = overrideAdTagUrl
     }
     
 }

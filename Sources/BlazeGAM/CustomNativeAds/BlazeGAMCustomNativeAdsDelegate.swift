@@ -7,6 +7,7 @@
 
 import Foundation
 import BlazeSDK
+import GoogleMobileAds
 
 /// The `BlazeGAMCustomNativeAdsDelegate` struct defines a set of methods that a delegate of the `BlazeGAM` class can adopt.
 /// The delegate methods provide callbacks for ad-related events and errors, allowing custom handling of these situations in the application.
@@ -28,6 +29,16 @@ public struct BlazeGAMCustomNativeAdsDelegate {
      */
     public typealias CustomGAMTargetingPropertiesHandler = () -> [String : String]
     
+    /**
+     - Returns: A custom publisher-provided identifier (PPID) for more granular targeting.
+     */
+    public typealias PublisherProvidedIdHandler = () -> String?
+    
+    /**
+     - Returns: Additional network extras object of type GADExtras for configuring ad requests with custom parameters.
+     */
+    public typealias NetworkExtrasHandler = () -> GADExtras?
+    
     /// Called when an error occurs during ad operations.
     public var onGAMAdError: OnGAMAdErrorHandler?
     
@@ -44,12 +55,39 @@ public struct BlazeGAMCustomNativeAdsDelegate {
     /// ```
     public var customGAMTargetingProperties: CustomGAMTargetingPropertiesHandler?
     
+    /// Provides a custom publisher-provided identifier (PPID) for ad requests.
+    ///
+    /// Example implementation:
+    /// ```
+    /// publisherProvidedId {
+    ///     return "user12345"
+    /// }
+    /// ```
+    public var publisherProvidedId: PublisherProvidedIdHandler?
+    
+    /// Provides additional network extras through GADExtras for customizing ad requests.
+    /// Use this to set network-specific parameters that can enhance ad targeting or behavior.
+    ///
+    /// Example implementation:
+    /// ```
+    /// networkExtras {
+    ///     let extras = GADExtras()
+    ///     extras.additionalParameters = ["key1": "value1", "key2": 1234]
+    ///     return extras
+    /// }
+    /// ```
+    public var networkExtras: NetworkExtrasHandler?
+    
     public init(onGAMAdError: OnGAMAdErrorHandler? = nil,
                 onGAMAdEvent: OnGAMAdEventHandler? = nil,
-                customGAMTargetingProperties: CustomGAMTargetingPropertiesHandler? = nil) {
+                customGAMTargetingProperties: CustomGAMTargetingPropertiesHandler? = nil,
+                publisherProvidedId: PublisherProvidedIdHandler? = nil,
+                networkExtras: NetworkExtrasHandler? = nil) {
         self.onGAMAdError = onGAMAdError
         self.onGAMAdEvent = onGAMAdEvent
         self.customGAMTargetingProperties = customGAMTargetingProperties
+        self.publisherProvidedId = publisherProvidedId
+        self.networkExtras = networkExtras
     }
 }
 

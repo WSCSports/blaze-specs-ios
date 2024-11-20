@@ -72,9 +72,13 @@ final class BlazeIMAHandler: NSObject, BlazeIMAHandlerProtocol {
         // Create ad display container for ad rendering.
         self.volume = initialVolume
         
-        let mergedTagWithExtraParams = adTagEnricher.enrichedTagURL(requestData: requestData,
-                                                                    appExtraParams: extraParamsFromApp(),
-                                                                    initialVolume: initialVolume)
+        // Determine the final ad tag URL using the override if provided, or fall back to the enriched URL.
+        let mergedOrOverriddenAdTagUrl = appDelegate?.overrideAdTagUrl?() ?? adTagEnricher.enrichedTagURL(
+            requestData: requestData,
+            appExtraParams: extraParamsFromApp(),
+            initialVolume: initialVolume
+        )
+        
         let imaSettings = appDelegate?.customIMASettingsOrDefault()
         
         let adDisplayContainer = IMAAdDisplayContainer(adContainer: adContainerView, viewController: adVC, companionSlots: nil)
@@ -83,7 +87,7 @@ final class BlazeIMAHandler: NSObject, BlazeIMAHandlerProtocol {
         
         // Create an ad request with our ad tag, display container, and optional user context.
         let request = IMAAdsRequest(
-            adTagUrl: mergedTagWithExtraParams,
+            adTagUrl: mergedOrOverriddenAdTagUrl,
             adDisplayContainer: adDisplayContainer,
             contentPlayhead: nil,
             userContext: nil)

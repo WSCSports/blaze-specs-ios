@@ -45,7 +45,9 @@ final class DefaultBlazeGoogleCustomNativeAdsHandler: BlazeGoogleCustomNativeAds
         do {
             ads = try await adsProvider.generateAd(adRequestData: adRequestData,
                                                    defaultAdsConfig: defaultAdsConfig,
-                                                   customTargetingProperties: delegate.customGAMTargetingPropertiesOrDefault())
+                                                   customTargetingProperties: delegate.customGAMTargetingPropertiesOrDefault(),
+                                                   publisherProvidedId: delegate.publisherProvidedId?(),
+                                                   networkExtras: delegate.networkExtras?())
         } catch {
             delegate.onGAMAdError?(error)
         }
