@@ -43,11 +43,20 @@ final class DefaultBlazeGoogleCustomNativeAdsHandler: BlazeGoogleCustomNativeAds
     func provideAd(adRequestData: BlazeAdRequestData) async -> BlazeGoogleCustomNativeAdModel? {
         var ads: BlazeGoogleCustomNativeAdModel?
         do {
-            ads = try await adsProvider.generateAd(adRequestData: adRequestData,
-                                                   defaultAdsConfig: defaultAdsConfig,
-                                                   customTargetingProperties: delegate.customGAMTargetingPropertiesOrDefault(),
-                                                   publisherProvidedId: delegate.publisherProvidedId?(),
-                                                   networkExtras: delegate.networkExtras?())
+            let adUnitId = adRequestData.adInfo?.adUnitId ?? defaultAdsConfig?.adUnit ?? ""
+            let templateId = adRequestData.adInfo?.formatId ?? defaultAdsConfig?.templateId ?? ""
+            let adContext = adRequestData.adInfo?.context ?? [:]
+            
+            let requestData: BlazeGamCustomNativeAdRequestInformation = .init(adUnitId: adUnitId,
+                                                                    templateId: templateId,
+                                                                    adContext: adContext)
+            
+            ads = try await adsProvider.generateAd(adUnitId: adUnitId,
+                                                   templateId: templateId,
+                                                   adContext: adContext,
+                                                   customTargetingProperties: delegate.customGAMTargetingPropertiesOrDefault(.init(requestDataInfo: requestData)),
+                                                   publisherProvidedId: delegate.publisherProvidedId?(.init(requestDataInfo: requestData)),
+                                                   networkExtras: delegate.networkExtras?(.init(requestDataInfo: requestData)))
         } catch {
             delegate.onGAMAdError?(error)
         }

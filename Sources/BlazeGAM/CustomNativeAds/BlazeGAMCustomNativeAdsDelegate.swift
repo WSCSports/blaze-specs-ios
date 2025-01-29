@@ -13,6 +13,10 @@ import GoogleMobileAds
 /// The delegate methods provide callbacks for ad-related events and errors, allowing custom handling of these situations in the application.
 public struct BlazeGAMCustomNativeAdsDelegate {
     
+    public struct RequestDataInfo {
+        public let requestDataInfo: BlazeGamCustomNativeAdRequestInformation
+    }
+    
     /**
      - error: The error that occurred.
      */
@@ -27,17 +31,17 @@ public struct BlazeGAMCustomNativeAdsDelegate {
     /**
      - Returns: key-value pairs relevant to the ad targeting logic such as user demographics, behavior or other relevant advertising criteria.
      */
-    public typealias CustomGAMTargetingPropertiesHandler = () -> [String : String]
+    public typealias CustomGAMTargetingPropertiesHandler = (_ params: RequestDataInfo) -> [String : String]
     
     /**
      - Returns: A custom publisher-provided identifier (PPID) for more granular targeting.
      */
-    public typealias PublisherProvidedIdHandler = () -> String?
+    public typealias PublisherProvidedIdHandler = (_ params: RequestDataInfo) -> String?
     
     /**
      - Returns: Additional network extras object of type GADExtras for configuring ad requests with custom parameters.
      */
-    public typealias NetworkExtrasHandler = () -> GADExtras?
+    public typealias NetworkExtrasHandler = (_ params: RequestDataInfo) -> GADExtras?
     
     /// Called when an error occurs during ad operations.
     public var onGAMAdError: OnGAMAdErrorHandler?
@@ -95,7 +99,7 @@ public struct BlazeGAMCustomNativeAdsDelegate {
 extension BlazeGAMCustomNativeAdsDelegate {
     
     internal var customGAMTargetingPropertiesOrDefault: CustomGAMTargetingPropertiesHandler {
-        let defaultImpl: CustomGAMTargetingPropertiesHandler = {
+        let defaultImpl: CustomGAMTargetingPropertiesHandler = { params in
             return [:]
         }
         return customGAMTargetingProperties ?? defaultImpl

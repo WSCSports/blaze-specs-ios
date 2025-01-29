@@ -15,6 +15,8 @@ enum BlazeCustomNativeAdsConstants {
     static let imageKey = "Image"
     
     static let trackingURLKey = "TrackingURL"
+    static let impressionTrackingUrlsKey = "ImpressionTrackingUrls"
+    static let clickTrackingUrlsKey = "ClickTrackingUrls"
     
     static let clickURLKey = "CTAUrl"
     static let clickThroughCTAKey = "CTAText"

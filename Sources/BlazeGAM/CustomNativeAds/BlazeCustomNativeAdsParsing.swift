@@ -15,10 +15,24 @@ internal extension GADCustomNativeAd {
         guard let creativeType = string(forKey: BlazeCustomNativeAdsConstants.creativeTypeKey),
               let clickURL = string(forKey: BlazeCustomNativeAdsConstants.clickURLKey),
               let advertiserName = string(forKey: BlazeCustomNativeAdsConstants.advertiserNameKey),
-              let trackingURL = string(forKey: BlazeCustomNativeAdsConstants.trackingURLKey),
               let clickType = string(forKey: BlazeCustomNativeAdsConstants.clickTypeKey),
               let clickThroughCTA = string(forKey: BlazeCustomNativeAdsConstants.clickThroughCTAKey) else {
             return nil
+        }
+        
+        var impressionPixelsURLs: [String] = []
+        if let trackingURL = string(forKey: BlazeCustomNativeAdsConstants.trackingURLKey) {
+            impressionPixelsURLs.append(trackingURL)
+        }
+        if let impressionTrackingURLs = string(forKey: BlazeCustomNativeAdsConstants.impressionTrackingUrlsKey) {
+            let urlsArr = impressionTrackingURLs.components(separatedBy: ",").map { $0.trimmingCharacters(in: .whitespaces) }
+            impressionPixelsURLs.append(contentsOf: urlsArr)
+        }
+        
+        var clickPixelsURLs: [String] = []
+        if let clickTrackingURLs = string(forKey: BlazeCustomNativeAdsConstants.clickTrackingUrlsKey) {
+            let urlsArr = clickTrackingURLs.components(separatedBy: ",").map { $0.trimmingCharacters(in: .whitespaces) }
+            clickPixelsURLs.append(contentsOf: urlsArr)
         }
 
         var content: BlazeGoogleCustomNativeAdModel.Content?
@@ -59,7 +73,9 @@ internal extension GADCustomNativeAd {
         
         let trackingPixels: Set<BlazeGoogleCustomNativeAdModel.TrackingPixel> = [
             .init(eventType: .openedAd,
-                  url: trackingURL)
+                  urls: impressionPixelsURLs),
+            .init(eventType: .ctaClicked,
+                  urls: clickPixelsURLs)
         ]
         
         let adModel = BlazeGoogleCustomNativeAdModel(content: content,

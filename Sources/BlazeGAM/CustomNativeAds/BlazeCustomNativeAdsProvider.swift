@@ -11,19 +11,17 @@ import GoogleMobileAds
 
 final class BlazeCustomNativeAdsProvider {
 
-    func generateAd(adRequestData: BlazeAdRequestData,
-                    defaultAdsConfig: BlazeGAMCustomNativeAdsDefaultConfig?,
+    func generateAd(adUnitId: String,
+                    templateId: String,
+                    adContext: [String: String],
                     customTargetingProperties: [String: String],
                     publisherProvidedId: String?,
                     networkExtras: GADExtras?) async throws -> BlazeGoogleCustomNativeAdModel? {
-        var mergedCustomTargetingProperties = adRequestData.adInfo?.context ?? [:]
+        var mergedCustomTargetingProperties = adContext
         mergedCustomTargetingProperties.merge(customTargetingProperties) { sdk, app in
             // We prefer taking the app's property if we have conflicted properties on both.
             app
         }
-        
-        let adUnitId = adRequestData.adInfo?.adUnitId ?? defaultAdsConfig?.adUnit ?? ""
-        let templateId = adRequestData.adInfo?.formatId ?? defaultAdsConfig?.templateId ?? ""
 
         let ad = try await BlazeCustomNativeAdsManager.sharedInstance.getNativeAd(adUnitId: adUnitId,
                                                                                   templateId: templateId,
