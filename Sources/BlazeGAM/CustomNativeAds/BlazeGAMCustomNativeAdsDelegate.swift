@@ -29,16 +29,25 @@ public struct BlazeGAMCustomNativeAdsDelegate {
     public typealias OnGAMAdEventHandler = ((eventType: BlazeGoogleCustomNativeAdsHandlerEventType, adData: BlazeCustomNativeAdData)) -> Void
     
     /**
+     - Parameters:
+        -  params: The request data information provides additional  info regarding the current ad request.
+     
      - Returns: key-value pairs relevant to the ad targeting logic such as user demographics, behavior or other relevant advertising criteria.
      */
     public typealias CustomGAMTargetingPropertiesHandler = (_ params: RequestDataInfo) -> [String : String]
     
     /**
+     - Parameters:
+        -  params: The request data information provides additional  info regarding the current ad request.
+     
      - Returns: A custom publisher-provided identifier (PPID) for more granular targeting.
      */
     public typealias PublisherProvidedIdHandler = (_ params: RequestDataInfo) -> String?
     
     /**
+     - Parameters:
+        -  params: The request data information provides additional  info regarding the current ad request.
+     
      - Returns: Additional network extras object of type GADExtras for configuring ad requests with custom parameters.
      */
     public typealias NetworkExtrasHandler = (_ params: RequestDataInfo) -> GADExtras?

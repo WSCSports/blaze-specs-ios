@@ -14,6 +14,10 @@ import GoogleInteractiveMediaAds
 /// query parameters and custom settings for the IMA SDK.
 public struct BlazeIMADelegate {
     
+    public struct RequestDataInfo {
+        public let requestDataInfo: BlazeIMAAdRequestInformation
+    }
+    
     /**
      - message: A string describing the error that occurred.
      */
@@ -26,19 +30,28 @@ public struct BlazeIMADelegate {
     public typealias OnIMAAdEventHandler = ((eventType: BlazeIMAHandlerEventType, adInfo: BlazeImaAdInfo)) -> Void
     
     /**
+     - Parameters:
+        -  params: The request data information provides additional  info regarding the current ad request.
+     
      - Returns: Additional query parameters to be included in the ad tag.
      */
-    public typealias AdditionalIMATagQueryParamsHandler = () -> [String : String]
+    public typealias AdditionalIMATagQueryParamsHandler = (_ params: RequestDataInfo) -> [String : String]
     
     /**
+     - Parameters:
+        -  params: The request data information provides additional  info regarding the current ad request.
+     
      - Returns: Custom settings for the IMA SDK.
      */
-    public typealias CustomIMASettingsHandler = () -> IMASettings?
+    public typealias CustomIMASettingsHandler = (_ params: RequestDataInfo) -> IMASettings?
     
     /**
+     - Parameters:
+        -  params: The request data information provides additional  info regarding the current ad request.
+     
      - Returns: An overridden ad tag URL to be used instead of the default.
      */
-    public typealias OverrideAdTagUrlHandler = () -> String?
+    public typealias OverrideAdTagUrlHandler = (_ params: RequestDataInfo) -> String?
     
     
     /// Called when an error occurs during ad loading or playback.
@@ -103,14 +116,14 @@ public struct BlazeIMADelegate {
 extension BlazeIMADelegate {
     
     internal var additionalIMATagQueryParamsOrDefault: AdditionalIMATagQueryParamsHandler {
-        let defaultImpl: AdditionalIMATagQueryParamsHandler = {
+        let defaultImpl: AdditionalIMATagQueryParamsHandler = { params in
             return [:]
         }
         return additionalIMATagQueryParams ?? defaultImpl
     }
     
     internal var customIMASettingsOrDefault: CustomIMASettingsHandler {
-        let defaultImpl: CustomIMASettingsHandler = {
+        let defaultImpl: CustomIMASettingsHandler = { params in 
             return nil
         }
         return customIMASettings ?? defaultImpl

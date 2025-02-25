@@ -14,8 +14,10 @@ class BlazeIMAAdTagEnricher {
                         appExtraParams: [String: String],
                         initialVolume: Float) -> String {
         // Add internal query items - priotise existing current tag query items.
-        let internalEnrichedExtraParams = createInternalEnrichedQueryItems(context: requestData.context,
-                                                                           initialVolume: initialVolume)
+        let internalEnrichedExtraParams = AdServerParamsBuilder.createInternalEnrichedQueryItems(context: requestData.context,
+                                                                                                 initialVolume: initialVolume,
+                                                                                                 adServerType: requestData.adServerType)
+        
         var modifiedTag = updateTagURL(adTag: requestData.adTag,
                                        with: internalEnrichedExtraParams,
                                        shouldReplace: false)
@@ -81,28 +83,6 @@ class BlazeIMAAdTagEnricher {
         }
 
         return "\(currentCustParams)&\(additionalCustParams)"
-    }
-    
-    func createInternalEnrichedQueryItems(context: [String : String],
-                                          initialVolume: Float) -> [String : String] {
-        let isMuted = initialVolume == 0
-        var result: [String : String] = [
-            BlazeIMAConstants.vpmuteParam.key : BlazeIMAConstants.vpmuteParam.valueFor(isMuted: isMuted),
-            BlazeIMAConstants.plcmtParam.key : BlazeIMAConstants.plcmtParam.value,
-            BlazeIMAConstants.vposParam.key : BlazeIMAConstants.vposParam.value,
-            BlazeIMAConstants.vpaParam.key : BlazeIMAConstants.vpaParam.value
-        ]
-                
-        if context.isEmpty == false {
-            let custParamsItem = context.map {
-                let encodedValue = $0.value.urlEncodedForQueryCustParamValue ?? ""
-                return "\($0.key)=\(encodedValue)"
-            }.joined(separator: "&")
-            
-            result[BlazeIMAConstants.IMACustParamsKeyName] = custParamsItem
-        }
-        
-        return result
     }
     
 }

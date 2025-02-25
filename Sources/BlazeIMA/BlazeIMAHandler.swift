@@ -72,14 +72,17 @@ final class BlazeIMAHandler: NSObject, BlazeIMAHandlerProtocol {
         // Create ad display container for ad rendering.
         self.volume = initialVolume
         
+        // This information will be passed to the app through ima delegate for any custom logic
+        let requestExtraInformation: BlazeIMAAdRequestInformation = .init(contentExtraInfo: requestData.contentExtraInfo)
+        
         // Determine the final ad tag URL using the override if provided, or fall back to the enriched URL.
-        let mergedOrOverriddenAdTagUrl = appDelegate?.overrideAdTagUrl?() ?? adTagEnricher.enrichedTagURL(
+        let mergedOrOverriddenAdTagUrl = appDelegate?.overrideAdTagUrl?(.init(requestDataInfo: requestExtraInformation)) ?? adTagEnricher.enrichedTagURL(
             requestData: requestData,
-            appExtraParams: extraParamsFromApp(),
+            appExtraParams: extraParamsFromApp(requestExtraInformation: requestExtraInformation),
             initialVolume: initialVolume
         )
         
-        let imaSettings = appDelegate?.customIMASettingsOrDefault()
+        let imaSettings = appDelegate?.customIMASettingsOrDefault(.init(requestDataInfo: requestExtraInformation))
         
         let adDisplayContainer = IMAAdDisplayContainer(adContainer: adContainerView, viewController: adVC, companionSlots: nil)
         adsLoader = IMAAdsLoader(settings: imaSettings)
@@ -103,8 +106,8 @@ final class BlazeIMAHandler: NSObject, BlazeIMAHandlerProtocol {
         return BlazeImaAdInfo(adId: ad?.adId, adTitle: ad?.adTitle, adDescription: ad?.adDescription, adSystem: ad?.adSystem, isSkippable: ad?.isSkippable, skipTimeOffset: ad?.skipTimeOffset, adDuration: ad?.duration, advertiserName: ad?.advertiserName)
     }
     
-    private func extraParamsFromApp() -> [String: String] {
-        return appDelegate?.additionalIMATagQueryParamsOrDefault() ?? [:]
+    private func extraParamsFromApp(requestExtraInformation: BlazeIMAAdRequestInformation) -> [String: String] {
+        return appDelegate?.additionalIMATagQueryParamsOrDefault(.init(requestDataInfo: requestExtraInformation)) ?? [:]
     }
     
 }
