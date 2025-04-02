@@ -33,6 +33,7 @@ final class DefaultBlazeGAMBannerAdsHandler: NSObject, BlazeGAMBannerAdsHandler 
         let bannerView = GAMBannerView(adSize: adSize)
         bannerView.adUnitID = adRequestData.adUnit
         
+        callbacks.onAdRequested()
         bannerView.load(GAMRequest())
         
         bannerView.blazeAdditionalAdData = .init(

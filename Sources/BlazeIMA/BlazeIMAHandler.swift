@@ -89,6 +89,7 @@ final class BlazeIMAHandler: NSObject, BlazeIMAHandlerProtocol {
         adsLoader?.delegate = self
         
         // Create an ad request with our ad tag, display container, and optional user context.
+        sharedDelegate.onAdEvent(eventType: .adRequested, adInfo: blazeAdInfo(for: nil))
         let request = IMAAdsRequest(
             adTagUrl: mergedOrOverriddenAdTagUrl,
             adDisplayContainer: adDisplayContainer,
