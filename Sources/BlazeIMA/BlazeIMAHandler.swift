@@ -14,6 +14,7 @@ final class BlazeIMAHandler: NSObject, BlazeIMAHandlerProtocol {
     private var adsLoader: IMAAdsLoader?
     private var adsManager: IMAAdsManager?
     private let adTagEnricher = BlazeIMAAdTagEnricher()
+    private var mergedOrOverriddenAdTagUrl: String?
 
     var volume: Float = 0 {
         didSet {
@@ -68,6 +69,7 @@ final class BlazeIMAHandler: NSObject, BlazeIMAHandlerProtocol {
                     initialVolume: Float) {
         adsLoader = nil
         adsManager?.destroy()
+        mergedOrOverriddenAdTagUrl = nil
         
         // Create ad display container for ad rendering.
         self.volume = initialVolume
@@ -81,6 +83,8 @@ final class BlazeIMAHandler: NSObject, BlazeIMAHandlerProtocol {
             appExtraParams: extraParamsFromApp(requestExtraInformation: requestExtraInformation),
             initialVolume: initialVolume
         )
+        
+        self.mergedOrOverriddenAdTagUrl = mergedOrOverriddenAdTagUrl
         
         let imaSettings = appDelegate?.customIMASettingsOrDefault(.init(requestDataInfo: requestExtraInformation))
         
@@ -104,7 +108,7 @@ final class BlazeIMAHandler: NSObject, BlazeIMAHandlerProtocol {
     }
     
     private func blazeAdInfo(for ad: IMAAd?) -> BlazeImaAdInfo {
-        return BlazeImaAdInfo(adId: ad?.adId, adTitle: ad?.adTitle, adDescription: ad?.adDescription, adSystem: ad?.adSystem, isSkippable: ad?.isSkippable, skipTimeOffset: ad?.skipTimeOffset, adDuration: ad?.duration, advertiserName: ad?.advertiserName)
+        return BlazeImaAdInfo(adId: ad?.adId, adTitle: ad?.adTitle, adDescription: ad?.adDescription, adSystem: ad?.adSystem, isSkippable: ad?.isSkippable, skipTimeOffset: ad?.skipTimeOffset, adDuration: ad?.duration, advertiserName: ad?.advertiserName, adTag: mergedOrOverriddenAdTagUrl)
     }
     
     private func extraParamsFromApp(requestExtraInformation: BlazeIMAAdRequestInformation) -> [String: String] {
