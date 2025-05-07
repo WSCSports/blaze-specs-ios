@@ -22,19 +22,19 @@ final class DefaultBlazeGAMBannerAdsHandler: NSObject, BlazeGAMBannerAdsHandler 
     func createBannerView(adRequestData: BlazeGAMBannerAdsRequestData,
                           callbacks: BlazeGAMBannerAdsHandlerCallbacks) -> UIView? {
         
-        let adSize: GADAdSize
+        let adSize: AdSize
         switch adRequestData.adSize {
         case .banner:
-            adSize = GADAdSizeBanner
+            adSize = AdSizeBanner
         case .largeBanner:
-            adSize = GADAdSizeLargeBanner
+            adSize = AdSizeLargeBanner
         }
         
-        let bannerView = GAMBannerView(adSize: adSize)
+        let bannerView = AdManagerBannerView(adSize: adSize)
         bannerView.adUnitID = adRequestData.adUnit
         
         callbacks.onAdRequested()
-        bannerView.load(GAMRequest())
+        bannerView.load(AdManagerRequest())
         
         bannerView.blazeAdditionalAdData = .init(
             callbacks: callbacks
@@ -54,9 +54,9 @@ final class DefaultBlazeGAMBannerAdsHandler: NSObject, BlazeGAMBannerAdsHandler 
     
 }
 
-extension DefaultBlazeGAMBannerAdsHandler: GADBannerViewDelegate {
+extension DefaultBlazeGAMBannerAdsHandler: BannerViewDelegate {
     
-    func bannerViewDidReceiveAd(_ bannerView: GADBannerView) {
+    func bannerViewDidReceiveAd(_ bannerView: BannerView) {
         delegate.onGAMBannerAdsAdEvent?((eventType: .adLoaded,
                                          adData: .init(bannerView: bannerView)))
         
@@ -66,7 +66,7 @@ extension DefaultBlazeGAMBannerAdsHandler: GADBannerViewDelegate {
         bannerView.animateEntrance()
     }
     
-    func bannerViewDidRecordClick(_ bannerView: GADBannerView) {
+    func bannerViewDidRecordClick(_ bannerView: BannerView) {
         delegate.onGAMBannerAdsAdEvent?((eventType: .adClicked,
                                          adData: .init(bannerView: bannerView)))
         
@@ -74,7 +74,7 @@ extension DefaultBlazeGAMBannerAdsHandler: GADBannerViewDelegate {
         bannerView.blazeAdditionalAdData?.callbacks.onAdClick()
     }
     
-    func bannerViewDidRecordImpression(_ bannerView: GADBannerView) {
+    func bannerViewDidRecordImpression(_ bannerView: BannerView) {
         delegate.onGAMBannerAdsAdEvent?((eventType: .adImpression,
                                          adData: .init(bannerView: bannerView)))
         
@@ -82,7 +82,7 @@ extension DefaultBlazeGAMBannerAdsHandler: GADBannerViewDelegate {
         bannerView.blazeAdditionalAdData?.callbacks.onAdImpression()
     }
     
-    func bannerView(_ bannerView: GADBannerView, 
+    func bannerView(_ bannerView: BannerView, 
                     didFailToReceiveAdWithError error: any Error) {
         delegate.onGAMBannerAdsAdError?((error: error,
                                          adData: .init(bannerView: bannerView)))
@@ -90,7 +90,7 @@ extension DefaultBlazeGAMBannerAdsHandler: GADBannerViewDelegate {
     
 }
 
-internal extension GADBannerView {
+internal extension BannerView {
     struct BlazeAdditionalAdData {
         
         let callbacks: BlazeGAMBannerAdsHandlerCallbacks

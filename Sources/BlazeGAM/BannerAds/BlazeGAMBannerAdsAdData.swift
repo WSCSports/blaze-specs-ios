@@ -10,6 +10,6 @@ import GoogleMobileAds
 
 public struct BlazeGAMBannerAdsAdData {
     
-    let bannerView: GADBannerView
+    let bannerView: BannerView
     
 }

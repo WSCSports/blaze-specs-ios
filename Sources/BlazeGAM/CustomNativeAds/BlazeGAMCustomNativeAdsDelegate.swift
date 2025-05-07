@@ -48,9 +48,9 @@ public struct BlazeGAMCustomNativeAdsDelegate {
      - Parameters:
         -  params: The request data information provides additional  info regarding the current ad request.
      
-     - Returns: Additional network extras object of type GADExtras for configuring ad requests with custom parameters.
+     - Returns: Additional network extras object of type Extras for configuring ad requests with custom parameters.
      */
-    public typealias NetworkExtrasHandler = (_ params: RequestDataInfo) -> GADExtras?
+    public typealias NetworkExtrasHandler = (_ params: RequestDataInfo) -> Extras?
     
     /// Called when an error occurs during ad operations.
     public var onGAMAdError: OnGAMAdErrorHandler?
@@ -78,13 +78,13 @@ public struct BlazeGAMCustomNativeAdsDelegate {
     /// ```
     public var publisherProvidedId: PublisherProvidedIdHandler?
     
-    /// Provides additional network extras through GADExtras for customizing ad requests.
+    /// Provides additional network extras through Extras for customizing ad requests.
     /// Use this to set network-specific parameters that can enhance ad targeting or behavior.
     ///
     /// Example implementation:
     /// ```
     /// networkExtras {
-    ///     let extras = GADExtras()
+    ///     let extras = Extras()
     ///     extras.additionalParameters = ["key1": "value1", "key2": 1234]
     ///     return extras
     /// }

@@ -29,7 +29,7 @@ internal extension BlazeGoogleCustomNativeAdModel {
     }
 
     
-    var nativeAd: GADCustomNativeAd? {
+    var nativeAd: CustomNativeAd? {
        adData?.nativeAd
     }
     

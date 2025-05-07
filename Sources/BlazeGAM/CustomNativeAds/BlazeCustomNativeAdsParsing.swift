@@ -9,7 +9,7 @@ import Foundation
 import GoogleMobileAds
 import BlazeSDK
 
-internal extension GADCustomNativeAd {
+internal extension CustomNativeAd {
     
     func toAdModel() -> BlazeGoogleCustomNativeAdModel? {
         guard let creativeType = string(forKey: BlazeCustomNativeAdsConstants.creativeTypeKey),

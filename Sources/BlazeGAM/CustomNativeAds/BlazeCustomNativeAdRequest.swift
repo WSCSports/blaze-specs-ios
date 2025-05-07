@@ -13,15 +13,15 @@ final class BlazeCustomNativeAdRequest: Equatable {
         lhs.adLoader == rhs.adLoader && lhs.templateId == rhs.templateId
     }
 
-    init(adLoader: GADAdLoader,
-         completion: @escaping (GADCustomNativeAd?, Error?) -> Void,
+    init(adLoader: AdLoader,
+         completion: @escaping (CustomNativeAd?, Error?) -> Void,
          templateId: String) {
         self.adLoader = adLoader
         self.completion = completion
         self.templateId = templateId
     }
 
-    let adLoader: GADAdLoader
-    let completion: (GADCustomNativeAd?, Error?) -> Void
+    let adLoader: AdLoader
+    let completion: (CustomNativeAd?, Error?) -> Void
     let templateId: String
 }

@@ -16,7 +16,7 @@ final class BlazeCustomNativeAdsProvider {
                     adContext: [String: String],
                     customTargetingProperties: [String: String],
                     publisherProvidedId: String?,
-                    networkExtras: GADExtras?) async throws -> BlazeGoogleCustomNativeAdModel? {
+                    networkExtras: Extras?) async throws -> BlazeGoogleCustomNativeAdModel? {
         var mergedCustomTargetingProperties = adContext
         mergedCustomTargetingProperties.merge(customTargetingProperties) { sdk, app in
             // We prefer taking the app's property if we have conflicted properties on both.

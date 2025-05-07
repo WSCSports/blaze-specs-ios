@@ -8,7 +8,7 @@
 import GoogleMobileAds
 import UIKit
 
-final class BlazeCustomNativeAdsManager: NSObject, GADAdLoaderDelegate, GADCustomNativeAdLoaderDelegate {
+final class BlazeCustomNativeAdsManager: NSObject, AdLoaderDelegate, CustomNativeAdLoaderDelegate {
     
     static let sharedInstance = BlazeCustomNativeAdsManager()
     
@@ -25,7 +25,7 @@ final class BlazeCustomNativeAdsManager: NSObject, GADAdLoaderDelegate, GADCusto
                      templateId: String,
                      customTargetingProperties: [String: String],
                      publisherProvidedId: String?,
-                     networkExtras: GADExtras?) async throws -> GADCustomNativeAd? {
+                     networkExtras: Extras?) async throws -> CustomNativeAd? {
         return try await withCheckedThrowingContinuation { continuation in
             BlazeCustomNativeAdsManager.sharedInstance.getNativeAd(
                 adUnitId: adUnitId,
@@ -48,16 +48,16 @@ final class BlazeCustomNativeAdsManager: NSObject, GADAdLoaderDelegate, GADCusto
                              templateId: String,
                              customTargetingProperties: [String: String],
                              publisherProvidedId: String?,
-                             networkExtras: GADExtras?,
-                             completion: @escaping (GADCustomNativeAd?, Error?) -> Void) {
-        let adLoader = GADAdLoader(
+                             networkExtras: Extras?,
+                             completion: @escaping (CustomNativeAd?, Error?) -> Void) {
+        let adLoader = AdLoader(
             adUnitID: adUnitId,
             rootViewController: nil,
-            adTypes: [GADAdLoaderAdType.customNative],
+            adTypes: [AdLoaderAdType.customNative],
             options: nil)
         adLoader.delegate = self
         
-        let request = GAMRequest()
+        let request = AdManagerRequest()
         request.customTargeting = customTargetingProperties
         
         // Add publisher provided ID if it is set
@@ -83,7 +83,7 @@ final class BlazeCustomNativeAdsManager: NSObject, GADAdLoaderDelegate, GADCusto
         }
     }
     
-    func customNativeAdFormatIDs(for adLoader: GADAdLoader) -> [String] {
+    func customNativeAdFormatIDs(for adLoader: AdLoader) -> [String] {
         let templateId = currentAdRequests.first { nativeAdRequest in
             nativeAdRequest.adLoader == adLoader
         }?.templateId ?? ""
@@ -91,7 +91,7 @@ final class BlazeCustomNativeAdsManager: NSObject, GADAdLoaderDelegate, GADCusto
         return [templateId]
     }
     
-    func adLoader(_ adLoader: GADAdLoader, didReceive customNativeAd: GADCustomNativeAd) {
+    func adLoader(_ adLoader: AdLoader, didReceive customNativeAd: CustomNativeAd) {
         guard let nativeAdRequest = currentAdRequests.first(where: { nativeAdRequest in
             nativeAdRequest.adLoader == adLoader
         }) else { return }
@@ -99,7 +99,7 @@ final class BlazeCustomNativeAdsManager: NSObject, GADAdLoaderDelegate, GADCusto
         removeAdRequest(adRequest: nativeAdRequest)
     }
     
-    func adLoader(_ adLoader: GADAdLoader, didFailToReceiveAdWithError error: Error) {
+    func adLoader(_ adLoader: AdLoader, didFailToReceiveAdWithError error: Error) {
         guard let nativeAdRequest = currentAdRequests.first(where: { nativeAdRequest in
             nativeAdRequest.adLoader == adLoader
         }) else { return }
