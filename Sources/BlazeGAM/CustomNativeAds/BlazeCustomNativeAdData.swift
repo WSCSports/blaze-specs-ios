@@ -7,6 +7,7 @@
 
 import Foundation
 import GoogleMobileAds
+import BlazeSDK
 
 /// `BlazeCustomNativeAdData` is a structure that encapsulates data related to a native advertisement.
 /// It serves as a container for ad information that can be used throughout the `BlazeGAM` system
@@ -18,6 +19,11 @@ public struct BlazeCustomNativeAdData {
     /// access to its details and functionalities such as assets, tracking, and interaction handlers.
     /// If no ad is loaded, this property is nil, indicating that the ad data is not available.
     public let nativeAd: CustomNativeAd?
+    
+    /// Contextual metadata about the ad's surrounding content.
+    /// This information is typically used for analytics, targeting, and enrichment purposes.
+    /// It may include data about the content shown before, during, or after the ad.
+    public let extraInfo: BlazeContentExtraInfo
 }
 
 /// `BlazeCustomAdData` is a structure that encapsulates data related to a native advertisement.

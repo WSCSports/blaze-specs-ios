@@ -34,7 +34,7 @@ public struct BlazeGAMCustomNativeAdsDelegate {
      
      - Returns: key-value pairs relevant to the ad targeting logic such as user demographics, behavior or other relevant advertising criteria.
      */
-    public typealias CustomGAMTargetingPropertiesHandler = (_ params: RequestDataInfo) -> [String : String]
+    public typealias CustomGAMTargetingPropertiesHandler = (_ params: RequestDataInfo) async -> [String : String]
     
     /**
      - Parameters:
@@ -42,7 +42,7 @@ public struct BlazeGAMCustomNativeAdsDelegate {
      
      - Returns: A custom publisher-provided identifier (PPID) for more granular targeting.
      */
-    public typealias PublisherProvidedIdHandler = (_ params: RequestDataInfo) -> String?
+    public typealias PublisherProvidedIdHandler = (_ params: RequestDataInfo) async -> String?
     
     /**
      - Parameters:
@@ -50,7 +50,7 @@ public struct BlazeGAMCustomNativeAdsDelegate {
      
      - Returns: Additional network extras object of type Extras for configuring ad requests with custom parameters.
      */
-    public typealias NetworkExtrasHandler = (_ params: RequestDataInfo) -> Extras?
+    public typealias NetworkExtrasHandler = (_ params: RequestDataInfo) async -> Extras?
     
     /// Called when an error occurs during ad operations.
     public var onGAMAdError: OnGAMAdErrorHandler?

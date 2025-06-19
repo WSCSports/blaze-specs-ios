@@ -35,7 +35,7 @@ public struct BlazeIMADelegate {
      
      - Returns: Additional query parameters to be included in the ad tag.
      */
-    public typealias AdditionalIMATagQueryParamsHandler = (_ params: RequestDataInfo) -> [String : String]
+    public typealias AdditionalIMATagQueryParamsHandler = (_ params: RequestDataInfo) async -> [String : String]
     
     /**
      - Parameters:
@@ -43,7 +43,7 @@ public struct BlazeIMADelegate {
      
      - Returns: Custom settings for the IMA SDK.
      */
-    public typealias CustomIMASettingsHandler = (_ params: RequestDataInfo) -> IMASettings?
+    public typealias CustomIMASettingsHandler = (_ params: RequestDataInfo) async -> IMASettings?
     
     /**
      - Parameters:
@@ -51,7 +51,7 @@ public struct BlazeIMADelegate {
      
      - Returns: An overridden ad tag URL to be used instead of the default.
      */
-    public typealias OverrideAdTagUrlHandler = (_ params: RequestDataInfo) -> String?
+    public typealias OverrideAdTagUrlHandler = (_ params: RequestDataInfo) async -> String?
     
     
     /// Called when an error occurs during ad loading or playback.

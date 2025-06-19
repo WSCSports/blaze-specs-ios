@@ -11,7 +11,7 @@ import BlazeSDK
 
 internal extension CustomNativeAd {
     
-    func toAdModel() -> BlazeGoogleCustomNativeAdModel? {
+    func toAdModel(extraInfo: BlazeContentExtraInfo) -> BlazeGoogleCustomNativeAdModel? {
         guard let creativeType = string(forKey: BlazeCustomNativeAdsConstants.creativeTypeKey),
               let clickURL = string(forKey: BlazeCustomNativeAdsConstants.clickURLKey),
               let advertiserName = string(forKey: BlazeCustomNativeAdsConstants.advertiserNameKey),
@@ -78,11 +78,15 @@ internal extension CustomNativeAd {
                   urls: clickPixelsURLs)
         ]
         
-        let adModel = BlazeGoogleCustomNativeAdModel(content: content,
-                              title: advertiserName,
-                              cta: cta,
-                              trackingPixelAdList: trackingPixels,
-                              customAdditionalData: BlazeCustomNativeAdData(nativeAd: self))
+        let dataModel = BlazeCustomNativeAdData(nativeAd: self, extraInfo: extraInfo)
+        
+        let adModel = BlazeGoogleCustomNativeAdModel(
+            content: content,
+            title: advertiserName,
+            cta: cta,
+            trackingPixelAdList: trackingPixels,
+            customAdditionalData: dataModel
+        )
 
         return adModel
     }

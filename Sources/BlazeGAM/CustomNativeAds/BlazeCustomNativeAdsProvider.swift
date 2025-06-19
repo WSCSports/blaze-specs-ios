@@ -14,6 +14,7 @@ final class BlazeCustomNativeAdsProvider {
     func generateAd(adUnitId: String,
                     templateId: String,
                     adContext: [String: String],
+                    extraInfo: BlazeContentExtraInfo,
                     customTargetingProperties: [String: String],
                     publisherProvidedId: String?,
                     networkExtras: Extras?) async throws -> BlazeGoogleCustomNativeAdModel? {
@@ -28,7 +29,7 @@ final class BlazeCustomNativeAdsProvider {
                                                                                   customTargetingProperties: mergedCustomTargetingProperties,
                                                                                   publisherProvidedId: publisherProvidedId,
                                                                                   networkExtras: networkExtras)
-        let adModel = ad?.toAdModel()
+        let adModel = ad?.toAdModel(extraInfo: extraInfo)
         if adModel == nil {
             throw BlazeGAMCustomNativeAdsError(reason: .failedParsingAd)
         }

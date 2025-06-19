@@ -6,8 +6,11 @@
 //  Copyright © 2025 com.WSCSports. All rights reserved.
 //
 
+import BlazeSDK
+
 public struct BlazeGamCustomNativeAdRequestInformation {
     public let adUnitId: String
     public let templateId: String
     public let adContext: [String : String]
+    public let extraInfo: BlazeContentExtraInfo
 }

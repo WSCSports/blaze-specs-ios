@@ -15,7 +15,8 @@ final class BlazeIMAHandler: NSObject, BlazeIMAHandlerProtocol {
     private var adsManager: IMAAdsManager?
     private let adTagEnricher = BlazeIMAAdTagEnricher()
     private var mergedOrOverriddenAdTagUrl: String?
-
+    private var currentContentExtraInfo: BlazeContentExtraInfo?
+    
     var volume: Float = 0 {
         didSet {
             adsManager?.volume = volume
@@ -37,8 +38,6 @@ final class BlazeIMAHandler: NSObject, BlazeIMAHandlerProtocol {
             appDelegate?.onIMAAdEvent?((eventType: eventType, adInfo: adInfo))
             sdkDelegate?.onAdEvent(eventType: eventType, adInfo: adInfo)
         }
-        
-        
     }
     
     private let sharedDelegate = SharedDelegate()
@@ -62,34 +61,41 @@ final class BlazeIMAHandler: NSObject, BlazeIMAHandlerProtocol {
         setupNotificationObservers()
     }
     
-    
-    func requestAds(adContainerView: UIView, 
+    @MainActor
+    func requestAds(adContainerView: UIView,
                     adVC: UIViewController,
                     requestData: BlazeIMAAdRequestData,
-                    initialVolume: Float) {
+                    initialVolume: Float) async {
         adsLoader = nil
         adsManager?.destroy()
         mergedOrOverriddenAdTagUrl = nil
+        currentContentExtraInfo = requestData.extraInfo
         
         // Create ad display container for ad rendering.
         self.volume = initialVolume
         
         // This information will be passed to the app through ima delegate for any custom logic
-        let requestExtraInformation: BlazeIMAAdRequestInformation = .init(contentExtraInfo: requestData.contentExtraInfo)
+        let requestExtraInformation: BlazeIMAAdRequestInformation = .init(
+            contentExtraInfo: requestData.contentExtraInfo,
+            extraInfo: requestData.extraInfo
+        )
+        
+        let delegateResults = await loadDelegateResults(requestData: .init(requestDataInfo: requestExtraInformation))
         
         // Determine the final ad tag URL using the override if provided, or fall back to the enriched URL.
-        let mergedOrOverriddenAdTagUrl = appDelegate?.overrideAdTagUrl?(.init(requestDataInfo: requestExtraInformation)) ?? adTagEnricher.enrichedTagURL(
+        let mergedOrOverriddenAdTagUrl = delegateResults.overriddenAdTagUrl ?? adTagEnricher.enrichedTagURL(
             requestData: requestData,
-            appExtraParams: extraParamsFromApp(requestExtraInformation: requestExtraInformation),
+            appExtraParams: delegateResults.appExtraParams,
             initialVolume: initialVolume
         )
         
         self.mergedOrOverriddenAdTagUrl = mergedOrOverriddenAdTagUrl
         
-        let imaSettings = appDelegate?.customIMASettingsOrDefault(.init(requestDataInfo: requestExtraInformation))
-        
-        let adDisplayContainer = IMAAdDisplayContainer(adContainer: adContainerView, viewController: adVC, companionSlots: nil)
-        adsLoader = IMAAdsLoader(settings: imaSettings)
+        let adDisplayContainer = IMAAdDisplayContainer(adContainer: adContainerView,
+                                                       viewController: adVC,
+                                                       companionSlots: nil)
+
+        adsLoader = IMAAdsLoader(settings: delegateResults.imaSettings)
         adsLoader?.delegate = self
         
         // Create an ad request with our ad tag, display container, and optional user context.
@@ -108,11 +114,63 @@ final class BlazeIMAHandler: NSObject, BlazeIMAHandlerProtocol {
     }
     
     private func blazeAdInfo(for ad: IMAAd?) -> BlazeImaAdInfo {
-        return BlazeImaAdInfo(adId: ad?.adId, adTitle: ad?.adTitle, adDescription: ad?.adDescription, adSystem: ad?.adSystem, isSkippable: ad?.isSkippable, skipTimeOffset: ad?.skipTimeOffset, adDuration: ad?.duration, advertiserName: ad?.advertiserName, adTag: mergedOrOverriddenAdTagUrl)
+        return BlazeImaAdInfo(
+            adId: ad?.adId,
+            adTitle: ad?.adTitle,
+            adDescription: ad?.adDescription,
+            adSystem: ad?.adSystem,
+            isSkippable: ad?.isSkippable,
+            skipTimeOffset: ad?.skipTimeOffset,
+            adDuration: ad?.duration,
+            advertiserName: ad?.advertiserName,
+            adTag: mergedOrOverriddenAdTagUrl,
+            extraInfo: currentContentExtraInfo
+        )
     }
     
-    private func extraParamsFromApp(requestExtraInformation: BlazeIMAAdRequestInformation) -> [String: String] {
-        return appDelegate?.additionalIMATagQueryParamsOrDefault(.init(requestDataInfo: requestExtraInformation)) ?? [:]
+    private func extraParamsFromApp(_ requestData: BlazeIMADelegate.RequestDataInfo) async -> [String: String] {
+        return await appDelegate?.additionalIMATagQueryParamsOrDefault(requestData) ?? [:]
+    }
+    
+    /// Run delegate calls in parallel on background threads (explicitly off main thread by design)
+    /// If we do want to change this to run on the main thread, we can change the delegate declaration and add @MainActor, for example from:
+    /// ```swift
+    /// public typealias CustomGAMTargetingPropertiesHandler = (_ params: RequestDataInfo) async -> [String : String]
+    /// ```
+    /// to
+    /// ```swift
+    /// public typealias CustomGAMTargetingPropertiesHandler = @MainActor (_ params: RequestDataInfo) async -> [String : String]
+    /// ```
+    ///
+    func loadDelegateResults(requestData: BlazeIMADelegate.RequestDataInfo) async -> DelegateResults {
+        // Run delegate calls in parallel on background threads (explicitly off main thread by design)
+        async let appExtraParamsAsync = extraParamsFromApp(requestData)
+        async let overriddenAdTagUrlAsync = appDelegate?.overrideAdTagUrl?(requestData)
+        async let imaSettingsAsync = appDelegate?.customIMASettingsOrDefault(requestData)
+        
+        // Run delegate calls in parallel on background threads (explicitly off main thread by design)
+        // If we do want to change this to run on the main thread, we can change the delegate declaration and add @MainActor, for example from:
+        /// ```swift
+        /// public typealias CustomGAMTargetingPropertiesHandler = (_ params: RequestDataInfo) async -> [String : String]
+        /// ```
+        /// to
+        /// ```swift
+        /// public typealias CustomGAMTargetingPropertiesHandler = @MainActor (_ params: RequestDataInfo) async -> [String : String]
+        /// ```
+        ///
+        let appExtraParams = await appExtraParamsAsync
+        let overriddenAdTagUrl = await overriddenAdTagUrlAsync
+        let imaSettings = await imaSettingsAsync
+        
+        return .init(appExtraParams: appExtraParams,
+                     overriddenAdTagUrl: overriddenAdTagUrl,
+                     imaSettings: imaSettings)
+    }
+    
+    struct DelegateResults {
+        let appExtraParams: [String: String]
+        let overriddenAdTagUrl: String?
+        let imaSettings: IMASettings?
     }
     
 }

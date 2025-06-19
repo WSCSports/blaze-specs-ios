@@ -7,9 +7,9 @@
 
 import Foundation
 import GoogleMobileAds
+import BlazeSDK
 
 public struct BlazeGAMBannerAdsAdData {
-    
-    let bannerView: BannerView
-    
+    public let bannerView: BannerView
+    public let extraInfo: BlazeContentExtraInfo
 }

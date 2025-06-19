@@ -37,7 +37,8 @@ final class DefaultBlazeGAMBannerAdsHandler: NSObject, BlazeGAMBannerAdsHandler 
         bannerView.load(AdManagerRequest())
         
         bannerView.blazeAdditionalAdData = .init(
-            callbacks: callbacks
+            callbacks: callbacks,
+            extraInfo: adRequestData.extraInfo
         )
         
         bannerView.delegate = self
@@ -51,14 +52,21 @@ final class DefaultBlazeGAMBannerAdsHandler: NSObject, BlazeGAMBannerAdsHandler 
         
         return bannerView
     }
-    
 }
 
 extension DefaultBlazeGAMBannerAdsHandler: BannerViewDelegate {
     
+    private func resolveAdData(from bannerView: BannerView, error: Error? = nil) -> BlazeGAMBannerAdsAdData {
+        let extraInfo = bannerView.blazeAdditionalAdData?.extraInfo ?? .init(previous: nil, current: nil, next: nil)
+        let adData = BlazeGAMBannerAdsAdData(bannerView: bannerView, extraInfo: (error == nil) ? extraInfo : .init())
+        return adData
+    }
+    
     func bannerViewDidReceiveAd(_ bannerView: BannerView) {
-        delegate.onGAMBannerAdsAdEvent?((eventType: .adLoaded,
-                                         adData: .init(bannerView: bannerView)))
+        
+        let adData = resolveAdData(from: bannerView)
+
+        delegate.onGAMBannerAdsAdEvent?((eventType: .adLoaded, adData: adData))
         
         // Report ad loaded to the sdk.
         bannerView.blazeAdditionalAdData?.callbacks.onAdLoaded()
@@ -67,16 +75,20 @@ extension DefaultBlazeGAMBannerAdsHandler: BannerViewDelegate {
     }
     
     func bannerViewDidRecordClick(_ bannerView: BannerView) {
-        delegate.onGAMBannerAdsAdEvent?((eventType: .adClicked,
-                                         adData: .init(bannerView: bannerView)))
+        
+        let adData = resolveAdData(from: bannerView)
+
+        delegate.onGAMBannerAdsAdEvent?((eventType: .adClicked, adData: adData))
         
         // Report impression to the sdk.
         bannerView.blazeAdditionalAdData?.callbacks.onAdClick()
     }
     
     func bannerViewDidRecordImpression(_ bannerView: BannerView) {
-        delegate.onGAMBannerAdsAdEvent?((eventType: .adImpression,
-                                         adData: .init(bannerView: bannerView)))
+        
+        let adData = resolveAdData(from: bannerView)
+
+        delegate.onGAMBannerAdsAdEvent?((eventType: .adImpression, adData: adData))
         
         // Report impression to the sdk.
         bannerView.blazeAdditionalAdData?.callbacks.onAdImpression()
@@ -84,17 +96,16 @@ extension DefaultBlazeGAMBannerAdsHandler: BannerViewDelegate {
     
     func bannerView(_ bannerView: BannerView, 
                     didFailToReceiveAdWithError error: any Error) {
-        delegate.onGAMBannerAdsAdError?((error: error,
-                                         adData: .init(bannerView: bannerView)))
+        
+        let adData = resolveAdData(from: bannerView, error: error)
+        delegate.onGAMBannerAdsAdError?((error: error, adData: adData))
     }
-    
 }
 
 internal extension BannerView {
     struct BlazeAdditionalAdData {
-        
         let callbacks: BlazeGAMBannerAdsHandlerCallbacks
-        
+        let extraInfo: BlazeContentExtraInfo
     }
     
     private struct AssociatedKeys {
