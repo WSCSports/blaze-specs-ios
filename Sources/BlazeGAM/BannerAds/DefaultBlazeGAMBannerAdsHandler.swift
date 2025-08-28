@@ -34,8 +34,14 @@ final class DefaultBlazeGAMBannerAdsHandler: NSObject, BlazeGAMBannerAdsHandler 
         bannerView.adUnitID = adRequestData.adUnit
         
         callbacks.onAdRequested()
-        bannerView.load(AdManagerRequest())
         
+        let adData: BlazeGAMBannerAdsAdData = createAdData(from: bannerView,
+                                                           extraInfo: adRequestData.extraInfo,
+                                                           error: nil)
+        delegate.onGAMBannerAdsAdEvent?((eventType: .adRequested, adData: adData))
+        
+        bannerView.load(AdManagerRequest())
+                
         bannerView.blazeAdditionalAdData = .init(
             callbacks: callbacks,
             extraInfo: adRequestData.extraInfo
@@ -57,7 +63,18 @@ final class DefaultBlazeGAMBannerAdsHandler: NSObject, BlazeGAMBannerAdsHandler 
 extension DefaultBlazeGAMBannerAdsHandler: BannerViewDelegate {
     
     private func resolveAdData(from bannerView: BannerView, error: Error? = nil) -> BlazeGAMBannerAdsAdData {
-        let extraInfo = bannerView.blazeAdditionalAdData?.extraInfo ?? .init(previous: nil, current: nil, next: nil)
+        let adData = createAdData(from: bannerView,
+                                  extraInfo: bannerView.blazeAdditionalAdData?.extraInfo,
+                                  error: error)
+        return adData
+    }
+    
+    private func createAdData(
+        from bannerView: BannerView,
+        extraInfo: BlazeContentExtraInfo?,
+        error: Error?
+    ) -> BlazeGAMBannerAdsAdData {
+        let extraInfo = extraInfo ?? .init(previous: nil, current: nil, next: nil)
         let adData = BlazeGAMBannerAdsAdData(bannerView: bannerView, extraInfo: (error == nil) ? extraInfo : .init())
         return adData
     }
