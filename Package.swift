@@ -1,4 +1,4 @@
-// swift-tools-version:5.3
+// swift-tools-version:5.5
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "BlazeSDK",
     platforms: [
-        .iOS(.v13)
+        .iOS(.v15)
     ],
     products: [
         .library(
@@ -27,8 +27,8 @@ let package = Package(
     ],
     targets: [
         .binaryTarget(name: "BlazeSDK",
-                      url: "https://github.com/WSCSports/blaze-specs-ios/releases/download/1.13.1/BlazeSDK.zip",
-                      checksum: "88da0910e9d13f6bf370e3dd4c458c94df83666490e3c7ea3493aae88ebf57f5"),
+                      url: "https://github.com/WSCSports/blaze-specs-ios/releases/download/1.14.2/BlazeSDK.zip",
+                      checksum: "fbc782622246bbe19ee4e424cab2a5a5d878f9e4f1af51725d587c12f303fc0e"),
         .target(name: "BlazeIMA",
                 dependencies: ["BlazeSDK",
                                .product(name: "GoogleInteractiveMediaAds",

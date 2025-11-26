@@ -36,13 +36,13 @@ internal extension CustomNativeAd {
         }
 
         var content: BlazeGoogleCustomNativeAdModel.Content?
-        switch creativeType {
-        case BlazeCustomNativeAdsConstants.displayType:
+        switch creativeType.lowercased() {
+        case BlazeCustomNativeAdsConstants.displayType.lowercased():
             if let imageUrl = image(forKey: BlazeCustomNativeAdsConstants.imageKey)?.imageURL?.absoluteString {
                 content = .image(urlString: imageUrl, duration: 5)
             }
             
-        case BlazeCustomNativeAdsConstants.videoType:
+        case BlazeCustomNativeAdsConstants.videoType.lowercased():
             if let videoUrl = string(forKey: BlazeCustomNativeAdsConstants.videoKey) {
                 let previewImageUrl = string(forKey: BlazeCustomNativeAdsConstants.videoPreviewImageUrlKey)
                 content = .video(urlString: videoUrl, loadingImageUrl: previewImageUrl)
