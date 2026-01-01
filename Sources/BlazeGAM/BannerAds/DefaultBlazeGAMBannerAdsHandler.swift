@@ -28,6 +28,8 @@ final class DefaultBlazeGAMBannerAdsHandler: NSObject, BlazeGAMBannerAdsHandler 
             adSize = AdSizeBanner
         case .largeBanner:
             adSize = AdSizeLargeBanner
+        @unknown default:
+            adSize = AdSizeBanner
         }
         
         let bannerView = AdManagerBannerView(adSize: adSize)
@@ -40,7 +42,9 @@ final class DefaultBlazeGAMBannerAdsHandler: NSObject, BlazeGAMBannerAdsHandler 
                                                            error: nil)
         delegate.onGAMBannerAdsAdEvent?((eventType: .adRequested, adData: adData))
         
-        bannerView.load(AdManagerRequest())
+        let request = AdManagerRequest()
+        request.customTargeting = adRequestData.context
+        bannerView.load(request)
                 
         bannerView.blazeAdditionalAdData = .init(
             callbacks: callbacks,
