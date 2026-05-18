@@ -23,12 +23,12 @@ let package = Package(
         .package(url: "https://github.com/googleads/swift-package-manager-google-interactive-media-ads-ios.git",
                  "3.18.4"..<"4.0.0"), 
         .package(url: "https://github.com/googleads/swift-package-manager-google-mobile-ads.git",
-                 "12.0.0"..<"13.0.0")
+                 "12.0.0"..<"14.0.0")
     ],
     targets: [
         .binaryTarget(name: "BlazeSDK",
-                      url: "https://github.com/WSCSports/blaze-specs-ios/releases/download/1.18.1/BlazeSDK.zip",
-                      checksum: "b78b26670727b37c3e465029441a633e5c393dd32ce8c595933f429eacc31dbc"),
+                      url: "https://github.com/WSCSports/blaze-specs-ios/releases/download/1.19.0/BlazeSDK.zip",
+                      checksum: "91b09b6ef797dcb37dd506207a28c477653c4062e3f30409e1203108a8ac3972"),
         .target(name: "BlazeIMA",
                 dependencies: ["BlazeSDK",
                                .product(name: "GoogleInteractiveMediaAds",
