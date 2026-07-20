@@ -76,6 +76,10 @@ public struct BlazeIMADelegate {
     
     /// Custom settings for the IMA SDK.
     ///
+    /// - Note: Applied once, when the shared `IMAAdsLoader` is first created — Google IMA
+    ///   requires reusing a single loader, and settings can only be passed at creation.
+    ///   Values returned after the first ad request are ignored.
+    ///
     /// - Example:
     ///   To set the language and maximum number of redirect URLs:
     ///   ```

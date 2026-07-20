@@ -10,6 +10,19 @@ import BlazeSDK
 
 
 /// A singleton class that provides methods to enable or disable IMA ads using the Blaze SDK.
+///
+/// ## Thread Safety
+///
+/// All public methods on this class always perform their work on the main thread
+/// internally and are asynchronous. They are therefore safe to call from any thread.
+///
+/// This is required because the underlying Google IMA SDK uses a `WKWebView`,
+/// whose dealloc chain (triggered when the handler is released) must run on the
+/// main thread — enforced as a hard assertion on iOS 18+.
+///
+/// Because the work is dispatched asynchronously, side-effects (e.g. the internally
+/// registered IMA handler being nil-ed out by `disableAds()`) take effect on
+/// the next main-queue tick. Back-to-back calls preserve FIFO order.
 public class BlazeIMA {
     
     //MARK: - Public Properties
@@ -19,25 +32,29 @@ public class BlazeIMA {
     
     //MARK: Public methods
     
-    /// Enables ads by initializing the IMA handler
+    /// Enables ads by initializing the IMA handler.
     ///
-    /// Call this method to start displaying IMA ads in your application
+    /// Call this method to start displaying IMA ads in your application.
     ///
-    /// - Note: Enabling and disabling ads are not thread-safe. It's your responsibility to make sure you are enabling and disabling ads from the same thread.
+    /// - Note: The work is always performed on the main thread internally and is
+    ///   asynchronous. See the class-level *Thread Safety* note.
     public func enableAds(delegate: BlazeIMADelegate?) {
-        let imaHandler = BlazeIMAHandler()
-        imaHandler.appDelegate = delegate
-        Blaze.shared.imaHandler = imaHandler
+        DispatchQueue.main.async {
+            let imaHandler = BlazeIMAHandler()
+            imaHandler.appDelegate = delegate
+            BlazeExternalModulesBinder.shared.registerIMAHandler(imaHandler)
+        }
     }
     
-    /// Disables IMA ads
+    /// Disables IMA ads.
     ///
     /// Call this method to stop displaying IMA ads.
     ///
-    /// - Note: Enabling and disabling ads are not thread-safe. It's your responsibility to make sure you are enabling and disabling ads from the same thread.
+    /// - Note: The work is always performed on the main thread internally and is
+    ///   asynchronous. See the class-level *Thread Safety* note.
     public func disableAds() {
-        Blaze.shared.imaHandler = nil
+        DispatchQueue.main.async {
+            BlazeExternalModulesBinder.shared.registerIMAHandler(nil)
+        }
     }
-
- 
 }

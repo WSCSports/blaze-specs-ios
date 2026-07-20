@@ -15,5 +15,17 @@ extension String {
         let encodedValue = addingPercentEncoding(withAllowedCharacters: allowedCharacters)
         return encodedValue
     }
+
+    var isValidAdTagURL: Bool {
+        guard !isEmpty,
+              let components = URLComponents(string: self),
+              let scheme = components.scheme?.lowercased(),
+              scheme == "http" || scheme == "https",
+              let host = components.host,
+              !host.isEmpty else {
+            return false
+        }
+        return true
+    }
     
 }
