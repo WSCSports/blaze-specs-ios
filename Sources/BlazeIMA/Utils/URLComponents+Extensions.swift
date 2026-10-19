@@ -40,6 +40,15 @@ extension URLComponents {
         queryItems?[itemIndex] = URLQueryItem(name: name, value: newValue)
     }
     
+    /// Unlike `replaceQueryItemWithName`, which replaces the first match only, this collapses every occurrence into a single item.
+    /// Safe when `queryItems` is `nil` - it seeds the array rather than silently doing nothing.
+    mutating func setOnlyQueryItemWithName(_ name: String, newValue: String) {
+        var items = queryItems ?? []
+        items.removeAll { $0.name == name }
+        items.append(URLQueryItem(name: name, value: newValue))
+        queryItems = items
+    }
+
     mutating func setQueryItemWithName(_ name: String, newValue: String, shouldReplace: Bool) {
         if hasQueryItemWithName(name) {
             if shouldReplace {

@@ -94,6 +94,9 @@ public struct BlazeIMADelegate {
     
     /// Overrides the default ad tag URL with a custom one. This URL will be used for the ad request.
     ///
+    /// The returned string is used **verbatim** — not enriched or sanitized — so it must already
+    /// be a fully-encoded, valid `http`/`https` URL with a host, or the request is rejected.
+    ///
     /// Example implementation:
     /// ```
     /// overrideAdTagUrl {

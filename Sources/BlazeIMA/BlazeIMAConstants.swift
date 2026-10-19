@@ -20,6 +20,7 @@ struct BlazeIMAConstants {
     static let plcmtParam: StaticValueParam = .init(key: "plcmt", value: "1")
     static let vposParam: StaticValueParam = .init(key: "vpos", value: "midroll")
     static let vpaParam: StaticValueParam = .init(key: "vpa", value: "auto")
+    static let adRuleParam: StaticValueParam = .init(key: "ad_rule", value: "0")
     
     struct StaticValueParam {
         let key: String

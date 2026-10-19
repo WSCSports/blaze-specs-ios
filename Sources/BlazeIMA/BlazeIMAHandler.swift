@@ -129,6 +129,7 @@ final class BlazeIMAHandler: NSObject, BlazeIMAHandlerProtocol {
         let delegateResults = await loadDelegateResults(requestData: .init(requestDataInfo: requestExtraInformation))
         
         // Determine the final ad tag URL using the override if provided, or fall back to the enriched URL.
+        // The override is used verbatim, deliberately not sanitized - the client owns that string.
         let mergedOrOverriddenAdTagUrl = delegateResults.overriddenAdTagUrl ?? adTagEnricher.enrichedTagURL(
             requestData: requestData,
             appExtraParams: delegateResults.appExtraParams,
@@ -415,6 +416,7 @@ extension BlazeIMAHandler: BlazeIMAPrefetchHandlerProtocol {
             extraInfo: requestData.extraInfo
         )
         let delegateResults = await loadDelegateResults(requestData: .init(requestDataInfo: requestExtraInformation))
+        // As in the live path: a client-provided override is used verbatim, never sanitized.
         let tagUrl = delegateResults.overriddenAdTagUrl ?? adTagEnricher.enrichedTagURL(
             requestData: requestData,
             appExtraParams: delegateResults.appExtraParams,
